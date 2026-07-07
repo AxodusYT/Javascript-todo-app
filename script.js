@@ -11,8 +11,8 @@ const filters = document.querySelectorAll(".filter");
 
 let todos = [];
 let currentFilter = "all";
-checkEmptyState()
-setDate()
+checkEmptyState();
+setDate();
 
 addTaskBtn.addEventListener("click", () => {
   addTodo(taskInput.value);
@@ -105,6 +105,17 @@ function renderTodos() {
     todoText.classList.add("todo-item-text");
     todoText.textContent = todo.text;
 
+
+    ///// feature to edit task by double click on it ////
+    todoText.addEventListener("dblclick", () => editTodo(todo.id));
+    
+    ////// creating edit button ///
+
+    const edtBtn = document.createElement("button");
+    edtBtn.classList.add("edit-btn");
+    edtBtn.innerHTML = `<i class="ph ph-pencil"></i>`;
+    edtBtn.addEventListener("click", () => editTodo(todo.id));
+
     /// creating delete button
 
     const deleteBtn = document.createElement("button");
@@ -114,8 +125,9 @@ function renderTodos() {
 
     todoItem.appendChild(checkboxContainer);
     todoItem.appendChild(todoText);
+    todoItem.appendChild(edtBtn);
     todoItem.appendChild(deleteBtn);
-    // todoItem.append(checkboxContainer,todoText,deleteBtn)
+    // todoItem.append(checkboxContainer,todoText,edtBtn,deleteBtn)
 
     todosList.append(todoItem);
   });
@@ -130,15 +142,22 @@ function clearCompleted() {
 function toggleTodo(id) {
   todos = todos.map((todo) => {
     if (todo.id === id) {
-      return { ...todo,
-        completed: !todo.completed
-      };
-      
+      return { ...todo, completed: !todo.completed };
     }
     return todo;
   });
   saveTodos();
   renderTodos();
+}
+
+function editTodo(id) {
+  const todo = todos.find((todo) => todo.id === id);
+  const newText = prompt("Edit the task", todo.text);
+  if (newText.trim() === "") return;
+
+  todo.text = newText;
+  saveTodos()
+  renderTodos()
 }
 
 function deleteTodo(id) {
@@ -152,42 +171,36 @@ function loadTodos() {
   if (storedTodos) todos = JSON.parse(storedTodos);
   renderTodos();
   checkEmptyState();
-
 }
 
-filters.forEach(filter => {
+filters.forEach((filter) => {
   filter.addEventListener("click", () => {
-    setActiveFilter(filter.getAttribute("data-filter"))
-  })
-})
+    setActiveFilter(filter.getAttribute("data-filter"));
+  });
+});
 
 function setActiveFilter(filter) {
-  currentFilter =filter
+  currentFilter = filter;
 
-  filters.forEach(item => {
-    if(item.getAttribute("data-filter") === filter){
-      item.classList.add("active")
+  filters.forEach((item) => {
+    if (item.getAttribute("data-filter") === filter) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
     }
-    else {
-      item.classList.remove("active")
-      
-    }
-   })
-   renderTodos()
+  });
+  renderTodos();
 }
 
+function setDate() {
+  const options = { weekday: "long", month: "short", day: "numeric" };
+  const today = new Date();
 
-function setDate(){
-  const options = {weekday:"long",month:"short",day:"numeric" }
-  const today = new Date()
-
-  dateElement.textContent = today.toLocaleDateString("en-US", options)
-
+  dateElement.textContent = today.toLocaleDateString("en-US", options);
 }
-
 
 window.addEventListener("DOMContentLoaded", () => {
   loadTodos();
-  updateItemsCount()
-  setDate()
+  updateItemsCount();
+  setDate();
 });
