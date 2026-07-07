@@ -151,6 +151,8 @@ function loadTodos() {
   const storedTodos = localStorage.getItem("todos");
   if (storedTodos) todos = JSON.parse(storedTodos);
   renderTodos();
+  checkEmptyState();
+
 }
 
 filters.forEach(filter => {
