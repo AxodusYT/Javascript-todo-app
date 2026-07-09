@@ -51,7 +51,7 @@ function updateItemsCount() {
   const uncompletedTodos = todos.filter((todo) => !todo.completed);
 
   itemsLeft.textContent = `${uncompletedTodos.length} item${
-    uncompletedTodos.length !== 1 && 0 ? "s" : ""
+    uncompletedTodos.length !== 1 ? "s" : ""
   } left `;
 }
 
