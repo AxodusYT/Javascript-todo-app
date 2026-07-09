@@ -8,6 +8,8 @@ const clearCompletedBtn = document.getElementById("clear-completed");
 const emptyState = document.querySelector(".empty-state");
 const dateElement = document.getElementById("date");
 const filters = document.querySelectorAll(".filter");
+const themeBtn = document.querySelector("#theme-button");
+const themeIcon = document.querySelector("#theme-button i");
 
 let todos = [];
 let currentFilter = "all";
@@ -49,7 +51,7 @@ function updateItemsCount() {
   const uncompletedTodos = todos.filter((todo) => !todo.completed);
 
   itemsLeft.textContent = `${uncompletedTodos.length} item${
-    uncompletedTodos.length !== 1 ? "s" : ""
+    uncompletedTodos.length !== 1 && 0 ? "s" : ""
   } left `;
 }
 
@@ -105,10 +107,9 @@ function renderTodos() {
     todoText.classList.add("todo-item-text");
     todoText.textContent = todo.text;
 
-
     ///// feature to edit task by double click on it ////
     todoText.addEventListener("dblclick", () => editTodo(todo.id));
-    
+
     ////// creating edit button ///
 
     const edtBtn = document.createElement("button");
@@ -131,6 +132,37 @@ function renderTodos() {
 
     todosList.append(todoItem);
   });
+}
+
+//////// theme change /////
+
+themeBtn.addEventListener("click", toggleTheme);
+
+function toggleTheme() {
+  const isDark = document.body.classList.toggle("dark");
+
+  if (isDark) {
+    themeIcon.className = "ph ph-sun";
+  } else {
+    themeIcon.className = "ph ph-moon";
+  }
+
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light",
+  );
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+    themeIcon.className = "ph ph-sun";
+  }
+  else{
+    themeIcon.className = "ph ph-moon";
+  }
 }
 
 function clearCompleted() {
@@ -156,8 +188,8 @@ function editTodo(id) {
   if (newText.trim() === "") return;
 
   todo.text = newText;
-  saveTodos()
-  renderTodos()
+  saveTodos();
+  renderTodos();
 }
 
 function deleteTodo(id) {
@@ -201,6 +233,7 @@ function setDate() {
 
 window.addEventListener("DOMContentLoaded", () => {
   loadTodos();
+  loadTheme();
   updateItemsCount();
   setDate();
 });
